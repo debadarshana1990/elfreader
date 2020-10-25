@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 void readelf(char *elf)
 {
        printf("Parsing ELF \n");
-       Elf32_Ehdr header;
+       Elf64_Ehdr header;
        /* Copy Elf to the Header Structure */
        memcpy(&header,elf,sizeof(header));
        /* Check the magic Marker */
@@ -103,7 +103,7 @@ void readelf(char *elf)
 			  break;
 	}
 
-       printf("Type \t\t\t");
+       printf("File Type \t\t\t");
        switch(header.e_type)
        {
 	       case ET_REL : printf("Relocatble File\n");
@@ -119,7 +119,60 @@ void readelf(char *elf)
 			     break;
 	}
 
-
+	printf("Machine Type \t\t\t");
+	switch(header.e_machine)
+	{
+		case EM_M32 : printf("AT&T WE 32100\n");
+			      break;
+		case EM_SPARC : printf("Sun Microsystems SPARC.\n");
+			      break;
+		case EM_386 : printf("Intel 80386.\n");
+			      break;
+		case EM_68K : printf("Motorola 68000\n");
+			      break;
+		case EM_88K : printf("Motorola 68000\n");
+			      break;
+		case EM_860 : printf("Intel 80860\n");
+			      break;
+		case EM_MIPS : printf("MIPS RS3000 Big Endian\n");
+			      break;
+		case EM_PARISC : printf("HP/PA\n");
+			      break;
+		case EM_SPARC32PLUS : printf("SPARC with enhanced Instruction Set\n");
+			      break;
+		case EM_PPC :printf("PowerPC\n");
+			     break;
+		case EM_PPC64 :printf("PowerPC 64-Bit\n");
+			     break;
+		case EM_S390 :printf("IBM S/390\n");
+			     break;
+		case EM_ARM :printf("Advanced RISC Machine\n");
+			     break;
+		case EM_SH :printf("Renesas SuperH\n");
+			     break;
+		case EM_SPARCV9 :printf("SPARC v9 64-Bit\n");
+			     break;
+		case EM_IA_64 :printf("Intel Itanium\n");
+			     break;
+		case EM_X86_64 :printf("AMD X86_64\n");
+			     break;
+		case EM_VAX :printf("DEC Vax\n");
+			     break;
+		case EM_NONE : 
+		default :printf("None\n");
+			      break;
+	}		
+	
+	printf("Entry Point Address \t\t\t:%x\n",header.e_entry);
+	printf("Program Header Offset \t\t\t:%ld\n",header.e_phoff);
+	printf("Section Header Offset \t\t\t:%ld\n",header.e_shoff);
+	//printf("Processor Flags \t\t\t:%x\n",header.e_flags);
+	printf("ELF Header Size \t\t\t:%d\n",header.e_ehsize);
+	printf("Program Header size \t\t\t:%d\n",header.e_phentsize);
+	printf("Program Header Entries \t\t\t:%d\n",header.e_phnum);
+	printf("Section Header size \t\t\t:%d\n",header.e_shentsize);
+	printf("Section Header Entries \t\t\t:%d\n",header.e_shnum);
+	printf("Section Header Table Index \t\t\t:%d\n",header.e_shstrndx);
 
 
 }
