@@ -56,10 +56,72 @@ void readelf(char *elf)
        Elf32_Ehdr header;
        /* Copy Elf to the Header Structure */
        memcpy(&header,elf,sizeof(header));
-       printf("%x\n",header.e_ident[0]);
-       printf("%c\n",header.e_ident[1]);
-       printf("%c\n",header.e_ident[2]);
+       /* Check the magic Marker */
+       printf("Magic Marker \t\t\t");
+       printf("%x ",header.e_ident[0]);
+       printf("%c ",header.e_ident[1]);
+       printf("%c ",header.e_ident[2]);
        printf("%c\n",header.e_ident[3]);
+
+       printf("Archtecture \t\t\t");
+       switch(header.e_ident[4])
+       {
+	       case ELFCLASS32: printf("32-Bit\n");
+				break;
+	       case ELFCLASS64: printf("64-Bit\n");
+				break;
+	       case ELFCLASSNONE:
+	       default:printf("Invalid\n");
+				 break;
+	}
+
+       printf("Data format \t\t\t");
+       switch(header.e_ident[EI_DATA])
+       {
+	       case ELFDATA2LSB : printf("2's Complement,Little Endian\n");
+				  break;
+	       case ELFDATA2MSB : printf("2's Complement,Big Endian\n");
+				  break;
+	       case ELFDATANONE :
+	       default : printf("Unknown Data Format\n");
+			 break;
+	}
+       printf("ELF Version \t\t\t");
+       switch(header.e_ident[EI_VERSION])
+       {
+	       case EV_CURRENT : printf(" 1(current)\n");
+				break;
+	       default : printf("None\n");
+			break;
+	}
+       
+       printf("ABI version \t\t\t");
+       switch(header.e_ident[EI_OSABI])
+	{
+		/* need to be updated */
+		default : printf("System V\n");
+			  break;
+	}
+
+       printf("Type \t\t\t");
+       switch(header.e_type)
+       {
+	       case ET_REL : printf("Relocatble File\n");
+			     break;
+	       case ET_EXEC : printf("Executable File\n");
+			      break;
+	       case ET_DYN  : printf("Shared Object\n");
+			      break;
+	       case ET_CORE : printf("Core File\n");
+			      break;
+	       case ET_NONE : 
+	       default :     printf("Unknown Type\n");
+			     break;
+	}
+
+
+
+
 }
 
 
