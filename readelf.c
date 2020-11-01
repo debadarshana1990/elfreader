@@ -7,8 +7,13 @@
 #define ELF_FILE_ARGUMENT_MISSING 	1
 #define ELF_FILE_OPEN_ERROR		2
 
+#define ZERO 					0
+
+Elf64_Ehdr header;
+
 /*Declaration of function */
-void readelf(char *elf);
+void readelf_header(char *elf);
+void readelf_Pheader(char *elf);
 void elf_help(int ErrorNo)
 {
 
@@ -46,14 +51,15 @@ int main(int argc, char *argv[])
 	/*print the string */
      //	printf("string :%s",string_elf);
         /* Pass the String to Parse Elf */
-	readelf(string_elf);
+	readelf_header(string_elf);
+	readelf_Pheader(string_elf);
 	free(string_elf);
 	return 0;
 }
-void readelf(char *elf)
+void readelf_header(char *elf)
 {
        printf("Parsing ELF \n");
-       Elf64_Ehdr header;
+
        /* Copy Elf to the Header Structure */
        memcpy(&header,elf,sizeof(header));
        /* Check the magic Marker */
@@ -176,7 +182,95 @@ void readelf(char *elf)
 
 
 }
+/* Program Header Information */
+void readelf_Pheader(char *elf)
+{
+	Elf64_Phdr p_header;
+	int loop_table = 0;
+	//printf("pheadr size :%d\n",sizeof(Elf64_Phdr));
+	/* Check for e_phnum to find programme header is available or not */
+	if(ZERO != header.e_phnum)
+	{
 
+	}
+	else
+	{
+		printf("Program Header Table is not present\n");
+	}
+
+	printf("**********************************Program Header Table*************************************\n");
+	printf("Type\t\t\t offset\t\t vAddr\t\t pAddr\t\t ");
+	printf("FSize\t\t Msize\t\t flags\t\t align\n");
+	/* Loop over the Table and display */
+	for(loop_table = 0; loop_table < header.e_phnum; loop_table++)
+	{
+		memcpy(&p_header,&(elf[header.e_phoff + (sizeof(Elf64_Phdr) * loop_table)]), sizeof(Elf64_Phdr));
+		char string[6000];
+		memcpy(string,&p_header,6000);
+		for(char i = 0;i< (sizeof(Elf64_Phdr));i++)
+		{
+		//	printf("%x  ",string[i]);
+		}
+		printf("\n");
+
+		switch(p_header.p_type)
+		{
+		case PT_LOAD :printf("LOAD\t\t\t");
+					  break;
+		case PT_DYNAMIC :printf("DYNAMIC\t\t\t");
+						break;
+		case PT_INTERP :printf("INTERP\t\t\t");
+						break;
+		case PT_NOTE :printf("NOTE\t\t\t");
+						break;
+		case PT_SHLIB :printf("SHLIB\t\t\t");
+						break;
+		case PT_PHDR :printf("PHDR\t\t\t");
+						break;
+		case PT_LOPROC :printf("LOPROC\t\t\t");
+						break;
+		case PT_HIPROC :printf("HIPROC\t\t\t");
+						break;
+		case PT_GNU_STACK :printf("GNU_STACK\t\t");
+							break;
+		case PT_GNU_EH_FRAME : printf("GNU_EH_FRAME\t\t");
+							break;
+		case PT_GNU_RELRO : printf("GNU_RELRO\t\t");
+							break;
+		case PT_NULL :
+		default:	printf("Undefined\t\t");
+				break;
+
+		}
+		printf("%lx\t\t",p_header.p_offset);
+		printf("%lx\t\t",p_header.p_vaddr);
+		printf("%lx\t\t",p_header.p_paddr);
+		printf("%lx\t\t",p_header.p_filesz);
+		printf("%lx\t\t",p_header.p_memsz);
+		switch(p_header.p_flags)
+		{
+		case 0x04: printf("R\t\t");
+					break;
+		case 0x02:printf("W\t\t");
+					break;
+		case 0x01:printf("X\t\t");
+					break;
+		case 0x07 : printf("RWX\t\t");
+					break;
+		case 0x03 :printf("WE\t\t");
+					break;
+		case 0x05 :printf("RE\t\t");
+					break;
+		case 0x06 :printf("RW\t\t");
+					break;
+		case 0x00 :
+		default : printf("Undefined\t\t");
+					break;
+		}
+		printf("%lx\n",p_header.p_align);
+
+	}
+}
 
 
 
